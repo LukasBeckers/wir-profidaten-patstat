@@ -1,0 +1,6 @@
+jupyter
+ipykernel
+pandas
+matplotlib
+openpyxl
+fuzzywuzzy[speedup]
