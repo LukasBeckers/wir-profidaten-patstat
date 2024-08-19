@@ -2,31 +2,16 @@ import pandas as pd
 from pandas.io.formats.style_render import Optional
 from fuzzywuzzy import process
 from multiprocessing import Pool
-from typing import List, Union
+from typing import List, Union, Dict
 from typing import Optional as Opt
-import re
 
-
-def preprocess_names(name: str) -> str:
-    name = name.lower()
-    suffixes = [
-          r'\bgmbh\b', r'\bag\b', r'\bllc\b', r'\binc\b', r'\bcorp\b', r'\bltd\b', r'\bco\b',
-          r'\bs\.a\b', r'\bs\.r\.l\b', r'\bkg\b', r'\bohg\b', r'\bmbh\b', r'\bug\b', r'\bbv\b',
-          r'\bnv\b', r'\bplc\b', r'\bse\b', r'\boy\b', r'\bkgaa\b', r'\bsc\b', r'\bs\.c\.a\b',
-          r'\bs\.c\b', r'\bzrt\b', r'\bpte\b', r'\bsdn\b', r'\bbhd\b', r'\bco kg\b'
-      ]
-
-    pattern = r'(?i)\s?(' + '|'.join(suffixes) + r')\.?'
-    cleaned_name = re.sub(pattern, '', name)
-
-    return cleaned_name.strip()
+from preprocessing import SimpleGMBHRemover
 
 
 class Patstat():
     csv_path = 'data/patstat_data.csv'
     data = pd.read_csv(csv_path)
-
-    data["person_name"].apply(preprocess_names)
+    data = data[data["applt_seq_nr"] != 0]
 
     @classmethod
     def show(cls):
@@ -35,7 +20,7 @@ class Patstat():
 
 class Profidaten():
     excel_path = 'data/Profi-AuszugNov23_erweitert_V5.xlsx'
-    data =  pd.read_excel(excel_path)
+    data=pd.read_excel(excel_path)
 
     @classmethod
     def show(cls):
@@ -44,7 +29,7 @@ class Profidaten():
 
 class AusführendeStelle(Profidaten):
     data = Profidaten.data["p_ausführendeStelle"].dropna()
-    data.apply(preprocess_names)
+    data = pd.Series([SimpleGMBHRemover.preprocess_name(name) for name in data]).drop_duplicates().tolist()
 
 
 class GemeindeKennziffer(Profidaten):
@@ -62,6 +47,15 @@ def find_match(name, list_b:list, output_file: Opt[list]=None):
     return match
 
 
+def load_clean_names_dict() -> Dict[str, str]:
+    clean_names_dict = {}
+    with open ("./data/clean_names.txt", "r") as file:
+        for line in file:
+            name, clean_name = line.split(";")
+            clean_names_dict[name] = clean_name
+    return clean_names_dict
+
+
 class BestMatches(AusführendeStelle):
     @classmethod
     def find_closest_matches(cls, list_b: list, out_file: Opt[str]=None):
@@ -73,4 +67,9 @@ class BestMatches(AusführendeStelle):
 
 
 if __name__=="__main__":
-    BestMatches.find_closest_matches(Patstat.data["person_name"])
+    clean_names_dict = load_clean_names_dict()
+    names = pd.Series([v for v in clean_names_dict.values()]).dropna().drop_duplicates()
+    output_file = "./data/matching_results_cleanded.txt"
+    with open(output_file, "w") as file:
+        file.write("Ausführende Stelle; Patstat\n")
+    BestMatches.find_closest_matches(names.tolist(), out_file=output_file)

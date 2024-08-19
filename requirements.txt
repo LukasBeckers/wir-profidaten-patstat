@@ -4,3 +4,4 @@ pandas
 matplotlib
 openpyxl
 fuzzywuzzy[speedup]
+openai
