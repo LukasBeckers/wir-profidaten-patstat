@@ -39,9 +39,7 @@ class GMBHRemover(NamePreprocessor):
         return response['choices'][0]['message']['content'].strip()
 
 
-
 class SimpleGMBHRemover():
-
     patterns_to_remove = [
         r"gmbh", r"gbr", r"mbh", r"kg", r"k\.g\.", r"aktiengesellschaft", r"arbeitsgemeinschaft",
         r"g\.m\.b\.h\.", r"ag", r"a\.g\.", r"kommanditgesellschaft", r"auf aktien",
@@ -69,7 +67,7 @@ def clean_company_names(names: List[str], output_file: str):
             file.write(f"{name.replace(';', '')}; {clean_name.replace(';', '')}\n")
 
 
-if __name__ == "__main__":
+def clean_names():
     output_file = "./data/clean_patstat_names.txt"
 
     from profidaten_patstat_matching import Patstat, AusführendeStelle
@@ -81,3 +79,7 @@ if __name__ == "__main__":
     from profidaten_patstat_matching import Patstat, AusführendeStelle
     names = AusführendeStelle.data.to_list()
     clean_company_names(names, output_file=output_file)
+
+
+if __name__ == "__main__":
+    pass

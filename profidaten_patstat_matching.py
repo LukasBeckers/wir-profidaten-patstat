@@ -47,9 +47,9 @@ def find_match(name, list_b:list, output_file: Opt[list]=None):
     return match
 
 
-def load_clean_names_dict() -> Dict[str, str]:
+def load_clean_names_dict(file_path) -> Dict[str, str]:
     clean_names_dict = {}
-    with open ("./data/clean_names.txt", "r") as file:
+    with open (file_path, "r") as file:
         for line in file:
             name, clean_name = line.split(";")
             clean_names_dict[name] = clean_name
@@ -66,10 +66,16 @@ class BestMatches(AusführendeStelle):
         cls.matches = matches
 
 
-if __name__=="__main__":
-    clean_names_dict = load_clean_names_dict()
+
+def match_ausführende_stelle_patstat():
+    clean_names_dict = load_clean_names_dict("data/clean_patstat_names.txt")
     names = pd.Series([v for v in clean_names_dict.values()]).dropna().drop_duplicates()
-    output_file = "./data/matching_results_cleanded.txt"
+    output_file = "./data/matching_results.txt"
     with open(output_file, "w") as file:
-        file.write("Ausführende Stelle; Patstat\n")
+        file.write("Ausführende Stelle;Patstat\n")
     BestMatches.find_closest_matches(names.tolist(), out_file=output_file)
+
+
+
+if __name__=="__main__":
+    pass
