@@ -77,28 +77,10 @@ def classify_matching_results(name0: str, name1: str) -> bool:
         return classify_matching_results(name0, name1)
 
     response = response['choices'][0]['message']['content'].strip()
-    print(f"Name1: {name0}")
-    print(f"Name2: {name1}")
-    print(f"Classification:{response}")
-    print("")
     return response
 
 
-def postprocess():
-    matching_results = load_matching_results("./data/matching_results.txt")
-    with open("data/matching_results_classified.txt", "w", encoding="utf-8") as file:
-        file.write("Ausführende Stelle;Patstat;Classification\n")
-
-        for i, (name0, name1) in  enumerate(zip(matching_results["Ausführende Stelle"], matching_results["Patstat"])):
-            print(f"{i}/{len(matching_results)}")
-            classification_result = classify_matching_results(name0, name1)
-            file.write(f"{name0};{name1};{classification_result}\n")
-
-
 if __name__=="__main__":
-    results = pd.read_csv("data/matching_results_classified.txt", delimiter=";", lineterminator="\n")
-    from collections import Counter
-    C = Counter(results["Classification"])
-    print(C.most_common())
-    print(347/(532+347))
-    results.to_csv("data/matching_results_classified.csv", sep=",", index=False)
+    pass
+    api_key = os.getenv('OPENAI_API_KEY')
+    print(api_key)

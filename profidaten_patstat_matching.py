@@ -8,8 +8,8 @@ from typing import Optional as Opt
 from preprocessing import SimpleGMBHRemover
 
 
-class Patstat():
-    csv_path = 'data/patstat_data.csv'
+class Patstat:
+    csv_path = "data/patstat_data.csv" # Change this if needed
     data = pd.read_csv(csv_path)
     data = data[data["applt_seq_nr"] != 0]
 
@@ -18,9 +18,9 @@ class Patstat():
         print(cls.data)
 
 
-class Profidaten():
-    excel_path = 'data/Profi-AuszugNov23_erweitert_V5.xlsx'
-    data=pd.read_excel(excel_path)
+class Profidaten:
+    excel_path = "./data/Profi-Auszug 02.08.2024.xlsx" # Change this if needed
+    data = pd.read_excel(excel_path)
 
     @classmethod
     def show(cls):
@@ -29,14 +29,18 @@ class Profidaten():
 
 class AusführendeStelle(Profidaten):
     data = Profidaten.data["p_ausführendeStelle"].dropna()
-    data = pd.Series([SimpleGMBHRemover.preprocess_name(name) for name in data]).drop_duplicates().tolist()
+    data = (
+        pd.Series([SimpleGMBHRemover.preprocess_name(name) for name in data])
+        .drop_duplicates()
+        .tolist()
+    )
 
 
 class GemeindeKennziffer(Profidaten):
     data = Profidaten.data["p_gemeindekennzifferZE"].dropna()
 
 
-def find_match(name, list_b:list, output_file: Opt[list]=None):
+def find_match(name, list_b: list, output_file: Opt[list] = None):
     print(f"start search for match for name: {name}")
     match = process.extractOne(name, list_b)
     print(f"Name: {name}, Match:{match}")
@@ -49,7 +53,7 @@ def find_match(name, list_b:list, output_file: Opt[list]=None):
 
 def load_clean_names_dict(file_path) -> Dict[str, str]:
     clean_names_dict = {}
-    with open (file_path, "r") as file:
+    with open(file_path, "r") as file:
         for line in file:
             name, clean_name = line.split(";")
             clean_names_dict[name] = clean_name
@@ -58,24 +62,15 @@ def load_clean_names_dict(file_path) -> Dict[str, str]:
 
 class BestMatches(AusführendeStelle):
     @classmethod
-    def find_closest_matches(cls, list_b: list, out_file: Opt[str]=None):
+    def find_closest_matches(cls, list_b: list, out_file: Opt[str] = None):
 
         with Pool(processes=20) as pool:
-            matches = pool.starmap(find_match, [(name, list_b, out_file) for name in cls.data])
+            matches = pool.starmap(
+                find_match, [(name, list_b, out_file) for name in cls.data]
+            )
 
         cls.matches = matches
 
 
-
-def match_ausführende_stelle_patstat():
-    clean_names_dict = load_clean_names_dict("data/clean_patstat_names.txt")
-    names = pd.Series([v for v in clean_names_dict.values()]).dropna().drop_duplicates()
-    output_file = "./data/matching_results.txt"
-    with open(output_file, "w") as file:
-        file.write("Ausführende Stelle;Patstat\n")
-    BestMatches.find_closest_matches(names.tolist(), out_file=output_file)
-
-
-
-if __name__=="__main__":
+if __name__ == "__main__":
     pass
