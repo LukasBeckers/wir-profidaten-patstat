@@ -54,7 +54,7 @@ class Profidaten:
 ```
 >>>>>>> ebb33ae (chore: Update README.md)
 
-Add your openAI api key in main.ipynb in section "Classifing the Matching Results using gpt-4o mini
+Add your openAI api key in main.ipynb in section "Classifing the Matching Results using gpt-4o mini"
 
 
 You may need to install a new ipykernel with all requirements installed before you can run the  main.ipynb notebook.
