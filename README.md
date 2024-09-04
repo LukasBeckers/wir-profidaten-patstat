@@ -17,13 +17,9 @@ The following columns must be included: ("ID", "p_ausführendeStelle", "p_gemein
 
 Install the requirements.txt file.
 
-<<<<<<< HEAD
-```pip install -r requirements.txt```
-=======
 ```
 pip install -r requirements.txt
 ```
->>>>>>> ebb33ae (chore: Update README.md)
 
 Copy your Patstat dataset csv and your "profi" dataset csv into /data.
 
@@ -46,16 +42,9 @@ class Profidaten:
 
     @classmethod
     def show(cls):
-<<<<<<< HEAD
-        print(cls.data)```
-=======
-        print(cls.data)
-
 ```
->>>>>>> ebb33ae (chore: Update README.md)
 
 Add your openAI api key in main.ipynb in section "Classifing the Matching Results using gpt-4o mini"
-
 
 You may need to install a new ipykernel with all requirements installed before you can run the  main.ipynb notebook.
 To do this create a venv install the requirements.txt into it and then install the ipykernel into the venv and start the jupyter notebook
@@ -89,4 +78,4 @@ jupyter notebook
 
 To perform the matching Run all cells of main.ipynb.
 
-The result files will be found in the /data dir
+The result files will be found in the /data dir.
