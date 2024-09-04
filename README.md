@@ -17,7 +17,13 @@ The following columns must be included: ("ID", "p_ausführendeStelle", "p_gemein
 
 Install the requirements.txt file.
 
+<<<<<<< HEAD
 ```pip install -r requirements.txt```
+=======
+```
+pip install -r requirements.txt
+```
+>>>>>>> ebb33ae (chore: Update README.md)
 
 Copy your Patstat dataset csv and your "profi" dataset csv into /data.
 
@@ -40,7 +46,13 @@ class Profidaten:
 
     @classmethod
     def show(cls):
+<<<<<<< HEAD
         print(cls.data)```
+=======
+        print(cls.data)
+
+```
+>>>>>>> ebb33ae (chore: Update README.md)
 
 Add your openAI api key in main.ipynb in section "Classifing the Matching Results using gpt-4o mini
 
